@@ -19,7 +19,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         log.info("security config.......................");
         http.authorizeRequests().antMatchers("/guest/**").permitAll();
         http.authorizeRequests().antMatchers("/manager/**").hasRole("MANAGER");
-        http.formLogin();
+        http.authorizeRequests().antMatchers("/admin/**").hasRole("ADMIN");
+
+        http.formLogin().loginPage("/login");
+        http.exceptionHandling().accessDeniedPage("/accessDenied");
     }
 
     @Autowired
