@@ -5,13 +5,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.zerock.boot08.domain.Member;
 import org.zerock.boot08.domain.MemberRole;
 import org.zerock.boot08.persistence.MemberRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -20,6 +23,9 @@ import java.util.Arrays;
 public class MemberTest {
     @Autowired
     private MemberRepository repository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
     public void dummyDataInsert() {
@@ -42,5 +48,21 @@ public class MemberTest {
             member.setRoles(Arrays.asList(role));
             repository.save(member);
         }
+    }
+
+    @Test
+    public void 더미데이터_암호화하기() {
+        List<String> ids = new ArrayList<>();
+
+        for(int i = 0; i <= 100; i++) {
+            ids.add("user" + i);
+        }
+
+        repository.findAllById(ids).forEach(
+                member -> {
+                    member.setUpw(passwordEncoder.encode(member.getUpw()));
+                    repository.save(member);
+                }
+        );
     }
 }

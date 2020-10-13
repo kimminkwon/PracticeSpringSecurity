@@ -22,7 +22,7 @@ public class ZerockSecurityUser extends User {
     // 생성자 오버라이드
     public ZerockSecurityUser(Member member) {
         // password 인코딩이 없을 경우 {noop}을 사용
-        super(member.getUid(), "{noop}" + member.getUpw(), makeGrantedAuthority(member.getRoles()));
+        super(member.getUid(), member.getUpw(), makeGrantedAuthority(member.getRoles()));
         this.member = member;
     }
 
