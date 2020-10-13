@@ -16,8 +16,12 @@ import javax.sql.DataSource;
 // WebSecurityConfigurerAdapter = 설정을 담당하는 클래스
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /*
     @Autowired
     DataSource dataSource;
+     */
+    @Autowired
+    ZerockUserService zerockUserService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,19 +36,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().accessDeniedPage("/accessDenied");
         // 세선 무효화
         http.logout().logoutUrl("/logout").invalidateHttpSession(true);
+        // user정의 사용자정보 & 권한 묶음을 받음
+        http.userDetailsService(zerockUserService);
     }
 
+    /*
     // 인증 매니저를 생성하는 메서드
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         log.info("build auth global.......................");
-
-        /*
-        auth.inMemoryAuthentication()
-                .withUser("manager")
-                .password("1111")
-                .roles("MANAGER");
-         */
 
         // Spring security 에서 사용하는 정보: username, password, enabled(해당 계정이 사용가능한가?)
         String query1 = "SELECT uid username, upw password, true enabled FROM tbl_members WHERE uid= ?";
@@ -71,4 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
     }
+
+     */
 }
