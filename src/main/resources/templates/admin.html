@@ -1,4 +1,5 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
@@ -6,5 +7,58 @@
 </head>
 <body>
 <h1>Admin Page for Admin!</h1>
+
+<!-- Spring security의 Data 가져오기 -->
+<hr />
+<h3 sec:authentication="name">Spring security username</h3>
+<h3>[[${#authentication.name}]]</h3>
+<hr />
+
+<!--
+특정 권한을 가진 사람만 볼수 있는 버튼 등의 생성
+해당 경우에는 admin은 보일 것이나 manager이 보이지 않을 것!
+-->
+<p sec:authorize-url="/admin/aaa">
+    <a href="/admin/aaa">ADMIN AAA</a>
+</p>
+<p sec:authorize-url="/manager/aaa">
+    <a href="/manager/aaa">ADMIN AAA</a>
+</p>
+
+<h3 sec:authorize="hasRole('ROLE_ADMIN')">
+    This content is only for administrators!
+</h3>
+<h3 sec:authorize="hasRole('ROLE_MANAGER')">
+    This content is only for managers!
+</h3>
+
+<!--
+해당 Security의 객체(Member)를 조회하는 방법
+org.zerock.boot08.security.ZerockSecurityUser@ce2b2c2b:
+Username: user99; Password: [PROTECTED]; Enabled: true;
+AccountNonExpired: true; credentialsNonExpired: true; AccountNonLocked: true;
+Granted Authorities: ROLE_ADMIN
+-->
+<div>
+    [[${#authentication.principal}]]
+</div>
+<hr />
+
+<div>
+    [[${#authentication.principal.member}]]
+</div>
+<hr />
+
+<div>
+    [[${#authentication.principal.member.uname}]]
+</div>
+<hr />
+
+<div th:with="member=${#authentication.principal.member}">
+    <p>[[${member.uid}]]</p>
+    <p>[[${member.upw}]]</p>
+    <p>[[${member.uname}]]</p>
+</div>
+
 </body>
 </html>
