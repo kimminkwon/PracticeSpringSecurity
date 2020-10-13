@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import javax.sql.DataSource;
 
@@ -16,10 +18,10 @@ import javax.sql.DataSource;
 // WebSecurityConfigurerAdapter = 설정을 담당하는 클래스
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    /*
+    // Remember me 용도
     @Autowired
     DataSource dataSource;
-     */
+
     @Autowired
     ZerockUserService zerockUserService;
 
@@ -36,8 +38,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.exceptionHandling().accessDeniedPage("/accessDenied");
         // 세선 무효화
         http.logout().logoutUrl("/logout").invalidateHttpSession(true);
-        // user정의 사용자정보 & 권한 묶음을 받음
-        http.userDetailsService(zerockUserService);
+        // user정의 사용자정보 & 권한 묶음을 받음 + rememberMe 기능 추가
+        http.rememberMe().key("zerock")
+                .userDetailsService(zerockUserService)
+                .tokenRepository(getJDBCRepository())
+                .tokenValiditySeconds(60 * 60 * 24);
+    }
+
+    private PersistentTokenRepository getJDBCRepository() {
+        JdbcTokenRepositoryImpl repository = new JdbcTokenRepositoryImpl();
+        repository.setDataSource(dataSource);
+        return repository;
     }
 
     /*
